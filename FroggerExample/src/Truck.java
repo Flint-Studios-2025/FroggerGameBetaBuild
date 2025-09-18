@@ -1,30 +1,40 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
-/**
- * Bigger, slower vehicle.
- */
 class Truck {
     double x;
     final int y, w, h;
     final double speed;
 
     Truck(int x, int y, int w, int h, double speed) {
-        this.x = x; this.y = y; this.w = w; this.h = h; this.speed = speed;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.speed = speed;
     }
 
     void update() { x += speed; }
 
-    Rectangle bounds() { return new Rectangle((int)x, y, w, h); }
+    Rectangle bounds() { return new Rectangle((int) x, y, w, h); }
 
     void draw(Graphics2D g) {
-        // body
-        g.setColor(new Color(70, 120, 200));
-        g.fillRoundRect((int)x, y, w, h, 10, 10);
-        // cab
-        g.setColor(new Color(50, 90, 160));
-        g.fillRoundRect((int)x + w/10, y + h/6, w/4, h - h/3, 10, 10);
-        // bumper/shadow
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect((int)x + 8, y + h - 8, w - 16, 6);
+        BufferedImage spr = Assets.truck();
+        int xi = (int) x;
+        if (spr != null) {
+            if (speed <= 0) {
+                // Truck art faces left
+                g.drawImage(spr, xi, y, w, h, null);
+            } else {
+                // Moving right: flip the art
+                g.drawImage(spr, xi + w, y, -w, h, null);
+            }
+        } else {
+            // Fallback rectangle if sprite not loaded
+            g.setColor(new Color(84, 132, 196));
+            g.fillRect(xi, y, w, h);
+            g.setColor(Color.BLACK);
+            g.drawRect(xi, y, w, h);
+        }
     }
 }
